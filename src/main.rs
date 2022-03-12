@@ -6,34 +6,46 @@ use std::ffi::OsString;
 use std::process;
 use std::fmt;
 use serde::Deserialize;
-use std::io;
 
 #[derive(Debug, Deserialize)]
 struct Record {
     #[serde(rename = "Transaction Type")]
     transaction_type: String,
-    #[serde(rename = "date")]
+
+    #[serde(rename = "Date")]
     date: String,
+
     #[serde(rename = "Amount Debited")]
-    amount_debited: f64,
+    #[serde(deserialize_with = "csv::invalid_option")]
+    amount_debited: Option<f64>,
+
     #[serde(rename = "Debit Currency")]
     debit_currency: String,
-    #[serde(rename = "Amount_Credited")]
-    amount_credited: f64,
+
+    #[serde(rename = "Amount Credited")]
+    #[serde(deserialize_with = "csv::invalid_option")]
+    amount_credited: Option<f64>,
+
     #[allow(dead_code)]
     #[serde(rename = "Credit Currency")]
     credit_currency: String,
+
     #[serde(rename = "Buy / Sell Rate")]
-    buy_sell_rate: f64,
+    #[serde(deserialize_with = "csv::invalid_option")]
+    buy_sell_rate: Option<f64>,
+
     #[allow(dead_code)]
     #[serde(rename = "Direction")]
     direction: String,
+
     #[allow(dead_code)]
     #[serde(rename = "Spot Rate")]
-    spot_rate: f64,
+    spot_rate: Option<f64>,
+
     #[allow(dead_code)]
     #[serde(rename = "Source / Destination")]
     source_destination: String,
+
     #[allow(dead_code)]
     #[serde(rename = "Blockchain Transaction ID")]
     blockchain_tx_id: String,
@@ -47,19 +59,20 @@ impl fmt::Display for Record {
             "Sell"
         };
         let coins = if trans == "Buy" {
-            self.amount_credited
+            self.amount_credited.unwrap_or(0.)
         } else {
-            self.amount_debited
+            self.amount_debited.unwrap_or(0.)
         };
-        let can_dollars_per_coin = self.buy_sell_rate;
+        let can_dollars_per_coin = self.buy_sell_rate.unwrap_or(0.);
         let fee = 2.5f64;
         write!(f,
-            "{},{},{}, ,{}, , ,{}, , , , , ,Shakepay",
+            "{},{},{}, ,{}, , ,{}, , , , , ,Shakepay ({})",
             date_fix(&self.date),
             trans,
             coins,
             can_dollars_per_coin,
             fee,
+            self.credit_currency
         )
     }
 }
@@ -69,28 +82,17 @@ fn run() -> Result<(), Box<dyn Error>> {
     let mut rdr = csv::ReaderBuilder::new()
         .double_quote(false)
         // .has_headers(true)
+        .flexible(true)
+        .trim(csv::Trim::All)
         .from_path(file_path)?;
-
-    let mut wtr = csv::Writer::from_writer(io::stdout());
-
-    // the header line
-    if false {
-        // We nest this call in its own scope because of lifetimes.
-        let headers = rdr.headers()?;
-        wtr.write_record(headers)?;
-        wtr.flush()?;
-        // println!("{:?}", headers);
-    }
 
     // the data
     for result in rdr.deserialize() {
         let record: Record = result?;
         if record.transaction_type == "purchase/sale" {
-            // wtr.write_record(record)?;
             println!("{}", record);
         }
     }
-    // wtr.flush()?;
     Ok(())
 }
 
