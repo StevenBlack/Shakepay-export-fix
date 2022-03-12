@@ -87,9 +87,25 @@ fn run() -> Result<(), Box<dyn Error>> {
         .from_path(file_path)?;
 
     // the data
-    for result in rdr.deserialize() {
-        let record: Record = result?;
-        if record.transaction_type == "purchase/sale" {
+    {
+        let mut btc = vec![];
+        let mut eth = vec![];
+
+        for result in rdr.deserialize() {
+            let record: Record = result?;
+            if record.transaction_type == "purchase/sale" {
+                if record.credit_currency == "BTC" {
+                    btc.push(record)
+                } else if record.credit_currency == "ETH" {
+                    eth.push(record)
+                }
+
+            }
+        }
+        for record in btc {
+            println!("{}", record);
+        }
+        for record in eth {
             println!("{}", record);
         }
     }
