@@ -99,7 +99,6 @@ fn run() -> Result<(), Box<dyn Error>> {
                 } else if record.credit_currency == "ETH" {
                     eth.push(record)
                 }
-
             }
         }
         for record in btc {
