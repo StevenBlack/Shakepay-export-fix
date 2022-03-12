@@ -1,0 +1,18 @@
+[package]
+name = "shakepay-export-fix"
+version = "1.0.0"
+authors = ["Steven Black <steveb@stevenblack.com>"]
+description = """
+Shakepay offers an orders export that's hard to parse. This program takes the difficult .csv data and makes a usable .csv file I can actually use.
+"""
+homepage = "https://github.com/StevenBlack/shakepay-export-fix"
+repository = "https://github.com/StevenBlack/shakepay-export-fix"
+keywords = ["rust", "canada", "csv-parser", "remediation", "tax-compliance", "shakepay"]
+categories = ["command-line-utilities", "text-processing", "csv"]
+license = "MIT"
+edition = "2021"
+
+[dependencies]
+csv = "1"
+serde = { version = "1", features = ["derive"] }
+chrono = "0.4.19"
