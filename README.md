@@ -7,13 +7,13 @@ the CRA. This ought to be easy, but it's not.
 
 Shakepay provides a CSV export of your transactions, but it's not in a format that can be easily imported into Excel or accounting software. 
 
-This repository contains a utility, written in [Rust](https://www.rust-lang.org/) that will convert the CSV file into a format that 
+This repository contains a utility, written in [Rust](https://www.rust-lang.org/), that converts the CSV file into a format that 
 can be imported into Excel and other common finantial analysis and reporting software.
 
 ## Here's the problem
 
-The .CSV file that Shakepay provides has an issues that make it difficult to import into accounting software.  The "Date" column is in a 
-format that is not recognized by Excel.  The Shakepat date format appears to be [ISO 8601 in UTC](https://en.wikipedia.org/wiki/ISO_8601) but 
+The .CSV file that Shakepay provides has an issues that make it difficult to import into accounting software.  The `Date` column is in a 
+format that is not recognized by Excel.  The Shakepay date format appears to be [ISO 8601 in UTC](https://en.wikipedia.org/wiki/ISO_8601) but 
 that's not documented by Shakepay.
 
 Here's a sample chunk of CSV similar to what you'll get from Shakepay.  
