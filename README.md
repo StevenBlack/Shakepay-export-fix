@@ -1,5 +1,7 @@
 ![Shakepay logo](./shakepay.png)
 
+# Take note: not ready for prime time. Do not use.
+
 # Shakepay-export-fix
 
 [Shakepay](https://shakepay.com) allows Canadians to buy/sell bitcoin. And Canadians have to report their captial gains/losses to 
