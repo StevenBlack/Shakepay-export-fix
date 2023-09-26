@@ -54,9 +54,9 @@ struct Record {
 impl fmt::Display for Record {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
         let trans = if self.transaction_type == "purchase/sale" && self.debit_currency == "CAD" {
-            "Buy"
+            "Buy".to_string()
         } else {
-            "Sell"
+            "Sell".to_string()
         };
         let coins = if trans == "Buy" {
             self.amount_credited.unwrap_or(0.)
@@ -65,8 +65,10 @@ impl fmt::Display for Record {
         };
         let can_dollars_per_coin = self.buy_sell_rate.unwrap_or(0.);
         let fee = 2.5f64;
+        dbg!(self);
         write!(f,
-            "{},{},{}, ,{}, , ,{}, , , , , ,Shakepay ({})",
+            "{},{},{},{}, ,{}, , ,{}, , , , , ,Shakepay ({})",
+            self.transaction_type,
             date_fix(&self.date),
             trans,
             coins,
