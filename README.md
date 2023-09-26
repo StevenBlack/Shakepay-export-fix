@@ -1,24 +1,24 @@
-![Shakepay logo](./shakepay.png)
-
-# Take note: not ready for prime time. Do not use.
-
 # Shakepay-export-fix
 
-[Shakepay](https://shakepay.com) allows Canadians to buy/sell bitcoin. And Canadians have to report their captial gains/losses to 
+![Shakepay logo](./shakepay.png)
+
+## Warning: **not yet fit for use!**
+
+[Shakepay](https://shakepay.com) allows Canadians to buy/sell bitcoin. And Canadians have to report their captial gains/losses to
 the CRA. This ought to be easy, but it's not.
 
-Shakepay provides a CSV export of your transactions, but it's not in a format that can be easily imported into Excel or accounting software. 
+Shakepay provides a CSV export of your transactions, but it's not in a format that can be easily imported into Excel or accounting software.
 
-This repository contains a utility, written in [Rust](https://www.rust-lang.org/), that converts the CSV file into a format that 
+This repository contains a utility, written in [Rust](https://www.rust-lang.org/), that converts the CSV file into a format that
 can be imported into Excel and other common finantial analysis and reporting software.
 
 ## Here's the problem
 
-The .CSV file that Shakepay provides has an issues that make it difficult to import into accounting software.  The `Date` column is in a 
-format that is not recognized by Excel.  The Shakepay date format appears to be [ISO 8601 in UTC](https://en.wikipedia.org/wiki/ISO_8601) but 
+The .CSV file that Shakepay provides has an issues that make it difficult to import into accounting software.  The `Date` column is in a
+format that is not recognized by Excel.  The Shakepay date format appears to be [ISO 8601 in UTC](https://en.wikipedia.org/wiki/ISO_8601) but
 that's not documented by Shakepay.
 
-Here's a sample chunk of CSV similar to what you'll get from Shakepay.  
+Here's a sample chunk of CSV similar to what you'll get from Shakepay.
 
 ```csv
 "Transaction Type","Date","Amount Debited","Debit Currency","Amount Credited","Credit Currency","Buy / Sell Rate","Direction","Spot Rate","Source / Destination","Blockchain Transaction ID"
@@ -39,3 +39,28 @@ So if canadians want to make use of the Shakepay CSV export, they have to manual
 fuss with Excel import config settings.  All this should be easy, but it's not.
 
 This repository fixes that problem.
+
+## Usage
+
+The simplest thing here is do te following:
+
+0. Install rust (presuming you don't have rust installed already). See https://www.rust-lang.org/tools/install.
+
+
+1. Clone this repository locally.
+
+```
+$ git clone https://github.com/StevenBlack/Shakepay-export-fix.git
+```
+
+2. `cd` into the repo folder.
+
+```
+$ cd Shakepay-export-fix
+```
+
+Call `cargo run` with the full path of your csv file, sending fixed output to a new file.
+
+```
+cargo run -- ~/Downloads/transactions_summary.csv > ~/Downloads/transactions_summary_FIXED.csv
+```
