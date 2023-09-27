@@ -53,29 +53,30 @@ struct Record {
 
 impl fmt::Display for Record {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-        let trans = if self.transaction_type == "purchase/sale" && self.debit_currency == "CAD" {
-            "Buy".to_string()
-        } else {
-            "Sell".to_string()
+        let trans = {
+            match self.transaction_type.as_str() {
+                "fiat funding" => "Fund account".to_string(),
+                "crypto cashout" => "Move out".to_string(),
+                "purchase/sale" => "Buy".to_string(),
+                "other" => "Other".to_string(),
+                _ => "Unknown tx type".to_string(),
+            }
         };
-        let coins = if trans == "Buy" {
-            self.amount_credited.unwrap_or(0.)
-        } else {
-            self.amount_debited.unwrap_or(0.)
-        };
-        let can_dollars_per_coin = self.buy_sell_rate.unwrap_or(0.);
-        let fee = 2.5f64;
-        dbg!(self);
         write!(f,
-            "{},{},{},{}, ,{}, , ,{}, , , , , ,Shakepay ({})",
-            self.transaction_type,
+            "\"{}\",\"{}\",{},\"{}\",{},\"{}\",{},\"{}\",{},\"{}\",\"{}\"",
             date_fix(&self.date),
             trans,
-            coins,
-            can_dollars_per_coin,
-            fee,
-            self.credit_currency
-        )
+            self.amount_debited.unwrap_or(0.),
+            self.debit_currency,
+            self.amount_credited.unwrap_or(0.),
+            self.credit_currency,
+            self.buy_sell_rate.unwrap_or(0.),
+            self.direction,
+            self.spot_rate.unwrap_or(0.),
+            self.source_destination,
+            self.blockchain_tx_id
+        )?;
+        Ok(())
     }
 }
 
@@ -86,27 +87,16 @@ fn run() -> Result<(), Box<dyn Error>> {
         // .has_headers(true)
         .flexible(true)
         .trim(csv::Trim::All)
-        .from_path(file_path)?;
+        .from_path(file_path)
+        .map_err(|err| format!("Failed to read CSV file: {}", err))?;
 
-    // the data
+    // print out headers
+    println!("\"date\", \"transaction_type\", \"amount_debited\", \"debit_currency\", \"amount_credited\", \"credit_currency\", \"buy_sell_rate\", \"direction\", \"spot_rate\", \"source_destination\", \"blockchain_tx_id\"");
+
+    // print each row of data
     {
-        let mut btc = vec![];
-        let mut eth = vec![];
-
         for result in rdr.deserialize() {
             let record: Record = result?;
-            if record.transaction_type == "purchase/sale" {
-                if record.credit_currency == "BTC" {
-                    btc.push(record)
-                } else if record.credit_currency == "ETH" {
-                    eth.push(record)
-                }
-            }
-        }
-        for record in btc {
-            println!("{}", record);
-        }
-        for record in eth {
             println!("{}", record);
         }
     }
