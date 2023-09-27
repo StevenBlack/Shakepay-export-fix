@@ -2,8 +2,6 @@
 
 ![Shakepay logo](./shakepay.png)
 
-## Warning: **not yet fit for use!**
-
 [Shakepay](https://shakepay.com) allows Canadians to buy/sell bitcoin. And Canadians have to report their captial gains/losses to
 the CRA. This ought to be easy, but it's not.
 
